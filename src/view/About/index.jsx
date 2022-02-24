@@ -2,7 +2,7 @@ import React from 'react';
 export default class About extends React.Component{
   render(){
     return (
-      <div>关于我们</div>
+      <div>关于达英和</div>
     )
   }
 }

@@ -3,6 +3,8 @@ import * as Three from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import modelUrl from "../../assets/models/Bee.glb";
+let mixer=null;
+let clock = new Three.Clock();
 export default class BusinessScope extends React.Component {
   constructor(props) {
     super(props)
@@ -37,11 +39,20 @@ export default class BusinessScope extends React.Component {
     loader.load(modelUrl, (gltf) => {
       this.scene.add(gltf.scene);
       this.scene.scale.set(15, 15, 15);
+      console.log(gltf.scene)
+      mixer = new Three.AnimationMixer(gltf.scene);
+      var AnimationAction = mixer.clipAction(gltf.scene.animations[0]);
+      AnimationAction.play();
     });
   }
   animate = () => {
     requestAnimationFrame(this.animate);
     this.renderer.render(this.scene, this.camera);
+    if(mixer!==null){
+      //clock.getDelta()方法获得两帧的时间间隔
+      // 更新混合器相关的时间
+      mixer.update(clock.getDelta());
+    }
   }
   render() {
     return (

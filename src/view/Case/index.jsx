@@ -1,6 +1,9 @@
 import React from 'react';
 import * as Three from 'three';
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import imgUrl from "../../assets/img/earth.jpg";
+let camera, scene, renderer;
+let group, cubes;
 export default class Case extends React.Component {
   constructor(props) {
     super(props);
@@ -9,37 +12,80 @@ export default class Case extends React.Component {
     this.init();
     this.animate();
   }
-  init = () => {
-    //设置渲染区
+  addImageBitmap = () => {
+    new Three.ImageBitmapLoader()
+      .setOptions({ imageOrientation: 'none' })
+      .load(imgUrl + '?' + performance.now(), function (imageBitmap) {
+        const texture = new Three.CanvasTexture(imageBitmap);
+        const material = new Three.MeshBasicMaterial({ map: texture });
+        const geometry= new Three.BoxGeometry( 1, 1, 1 );
+        const cube = new Three.Mesh(geometry, material);
+        cube.position.set(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1);
+        cube.rotation.set(Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI);
+        cubes.add(cube);
+      });
+  }
+
+  addImage = () => {
+    new Three.ImageLoader()
+      .setCrossOrigin('*')
+      .load(imgUrl + '?' + performance.now(), function (image) {
+        const texture = new Three.CanvasTexture(image);
+        const material = new Three.MeshBasicMaterial({ color: 0xff8888, map: texture });
+        const geometry= new Three.BoxGeometry( 1, 1, 1 );
+        const cube = new Three.Mesh(geometry, material);
+        cube.position.set(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1);
+        cube.rotation.set(Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI);
+        cubes.add(cube);
+      });
+
+  }
+
+  addCube = (material) => {
+    const geometry= new Three.BoxGeometry( 1, 1, 1 );
+    const cube = new Three.Mesh(geometry, material);
+    cube.position.set(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1);
+    cube.rotation.set(Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI, Math.random() * 2 * Math.PI);
+    cubes.add(cube);
+  }
+
+  init=()=>{
     let threeModel = document.getElementById("threeModel");
-    this.renderer = new Three.WebGL1Renderer({ antialias: true });
-    this.renderer.setClearColor(new Three.Color(0xeeeeee))
-    this.renderer.setSize(threeModel.clientWidth, threeModel.clientHeight);
-    threeModel.appendChild(this.renderer.domElement);
-    //设置场景
-    this.scene = new Three.Scene();
-    //设置相机
-    this.camera = new Three.PerspectiveCamera(
-      45,
-      threeModel.clientWidth / threeModel.clientHeight,
-      0.01,
-      1000
-    );
-    this.camera.position.set(-30, 40, 30);
-    this.camera.lookAt(this.scene.position);
-    //设置模型
-    const cubeGeometry = new Three.BoxGeometry(4, 4, 4);
-    let cubeMaterial = new Three.MeshBasicMaterial({ color: 0x0000ff, wireframe: true });
-    let cube = new Three.Mesh(cubeGeometry, cubeMaterial);
-    cube.position.set(-4, 3, 0);
-    this.scene.add(cube);
-    
-    //设置相机控件
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);//创建控件对象
+  	camera = new Three.PerspectiveCamera( 30, threeModel.clientWidth/threeModel.clientHeight, 1, 1500 );
+  	camera.position.set( 0, 4, 7 );
+  	camera.lookAt( 0, 0, 0 );
+
+  	scene = new Three.Scene();
+    scene.background = new Three.Color( 0xeeeeee );
+
+  	group = new Three.Group();
+  	scene.add( group );
+
+  	group.add( new Three.GridHelper( 4, 12, 0x888888, 0x444444 ) );
+
+  	cubes = new Three.Group();
+  	group.add( cubes );
+
+  	// RENDERER
+
+  	renderer = new Three.WebGL1Renderer( { antialias: true } );
+  	renderer.setPixelRatio( window.devicePixelRatio );
+  	renderer.setSize(threeModel.clientWidth, threeModel.clientHeight);
+  	threeModel.appendChild( renderer.domElement );
+    new OrbitControls(camera, renderer.domElement)
+  	// TESTS
+
+  	setTimeout( this.addImage, 300 );
+  	setTimeout( this.addImage, 600 );
+  	setTimeout( this.addImage, 900 );
+  	setTimeout( this.addImageBitmap, 1300 );
+  	setTimeout( this.addImageBitmap, 1600 );
+  	setTimeout( this.addImageBitmap, 1900 );
   }
   animate = () => {
+    group.rotation.y = performance.now() / 3000;
     requestAnimationFrame(this.animate);
-    this.renderer.render(this.scene, this.camera);
+    renderer.render( scene, camera );
   }
   render() {
     return (

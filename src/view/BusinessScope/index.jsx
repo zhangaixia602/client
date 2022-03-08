@@ -41,7 +41,7 @@ export default class BusinessScope extends React.Component {
       this.scene.scale.set(15, 15, 15);
       console.log(gltf.scene)
       mixer = new Three.AnimationMixer(gltf.scene);
-      var AnimationAction = mixer.clipAction(gltf.scene.animations[0]);
+      var AnimationAction = mixer.clipAction(gltf.animations[0]);
       AnimationAction.play();
     });
   }

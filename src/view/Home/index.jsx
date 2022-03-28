@@ -7,21 +7,22 @@ export default class Home extends React.Component {
     return (
       <div className='home'>
         <Carousel
-        autoplay
-        className='bannerBox'
-        dotPosition="bottom"
-        dots={true}>
+          autoplay
+          autoplaySpeed={10000}
+          className='bannerBox'
+          dotPosition="bottom"
+          dots={true}>
           <div className='bannerItem'>
-            <img src={banner} alt="智慧园区" />
+            <img src={banner} alt="智慧园区1" />
           </div>
           <div className='bannerItem'>
-          <img src={banner} alt="智慧园区1" />
+            <img src={banner} alt="智慧园区1" />
           </div>
           <div className='bannerItem'>
-          <img src={banner} alt="智慧园区2" />
+            <img src={banner} alt="智慧园区2" />
           </div>
           <div className='bannerItem'>
-          <img src={banner} alt="智慧园区3" />
+            <img src={banner} alt="智慧园区3" />
           </div>
         </Carousel>
         <div className='home-box'></div>

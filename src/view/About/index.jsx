@@ -35,6 +35,7 @@ export default class About extends React.Component {
     //加载3D模型
     let loader = new OBJLoader();
     loader.load(modelUrl, (obj) => {
+      console.log(obj)
       this.scene.add(obj);
       this.scene.scale.set(15, 15, 15);
     });
